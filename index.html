@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e5f3a">
+<meta name="description" content="Tarqiya - ترقية: تطبيق يساعد الأستاذ في حساب نقاط الترقية ومعرفة الأهلية للترقية في الرتبة">
+<title>Tarqiya - ترقية</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="shortcut icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <span class="logo">📚</span>
+    <div>
+      <h1>Tarqiya</h1>
+      <p class="subtitle">ترقية — حساب نقاط الترقية والأهلية</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="updateBtn" class="install-btn" title="تحديث">🔄 تحديث</button>
+    <button id="installBtn" class="install-btn" hidden>تثبيت</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="calc">🧮 حساب النقاط</button>
+  <button class="tab" data-tab="elig">✅ الأهلية</button>
+  <button class="tab" data-tab="ranks">📊 جدول الرتب</button>
+  <button class="tab" data-tab="info">⚙️ الاعدادات</button>
+</nav>
+
+<main>
+  <section id="tab-calc" class="tab-panel active">
+    <div class="card">
+      <div class="form-grid">
+        <div class="field">
+          <label>السلك (الإطار)</label>
+          <select id="c-cycle">
+            <option value="primary" selected>التعليم الابتدائي</option>
+            <option value="middle">التعليم الإعدادي</option>
+            <option value="secondary">التعليم التأهيلي</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>نوع الترقية</label>
+          <select id="c-promotype">
+            <option value="2to1" selected>من الدرجة 2 إلى 1</option>
+            <option value="1toHC">من الدرجة 1 إلى خارج السلم</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>سنة الترقي المطلوبة</label>
+          <input type="number" id="c-sana" value="2026" min="2024" max="2040">
+        </div>
+        <div class="field full">
+          <label>الأقدمية في الإدارة (تاريخ التوظيف)</label>
+          <div class="date-row">
+            <select id="c-admin-d" class="date-part"></select>
+            <select id="c-admin-m" class="date-part"></select>
+            <input type="number" id="c-admin-y" class="date-part" placeholder="السنة" min="1980" max="2040" value="2012">
+          </div>
+        </div>
+        <div class="field full">
+          <label>الأقدمية في الدرجة (تاريخ الحصول على السلم)</label>
+          <div class="date-row">
+            <select id="c-scale-d" class="date-part"></select>
+            <select id="c-scale-m" class="date-part"></select>
+            <input type="number" id="c-scale-y" class="date-part" placeholder="السنة" min="1980" max="2040" value="2018">
+          </div>
+        </div>
+        <div class="field">
+          <label>نقطة المدير (0 — 20)</label>
+          <input type="number" id="c-modir" min="0" max="20" step="0.25" value="16">
+        </div>
+        <div class="field">
+          <label>نقطة المفتش (0 — 20)</label>
+          <input type="number" id="c-moufattish" min="0" max="20" step="0.25" value="16">
+        </div>
+        <div class="field">
+          <label>نقطة المدير الإقليمي (0 — 20)</label>
+          <input type="number" id="c-naib" min="0" max="20" step="0.25" value="16">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="calcPoints()">🧮 احسب نقاط ترقيتي</button>
+        <button class="secondary-btn" onclick="resetCalc()">🔄 إعادة</button>
+      </div>
+      <div id="calc-result" class="result-box" hidden>
+        <div class="big-num">
+          <div class="num" id="r-total">0</div>
+          <div class="lbl">المجموع النهائي للترقية</div>
+        </div>
+        <div class="rows">
+          <div class="row"><span>نقاط الأقدمية العامة</span><span id="r-am">—</span></div>
+          <div class="row"><span>نقاط الأقدمية في السلم × 2</span><span id="r-salm">—</span></div>
+          <div class="row"><span>مجموع النقط المهنية (إدارة+تفتيش+إقليمي)</span><span id="r-pro">—</span></div>
+          <div class="row total"><span>المجموع النهائي</span><span id="r-total2">—</span></div>
+        </div>
+        <div id="calc-verdict" class="verdict"></div>
+        <button class="secondary-btn" onclick="saveCalc()">💾 حفظ النتيجة</button>
+      </div>
+    </div>
+
+    
+  </section>
+
+  <section id="tab-elig" class="tab-panel">
+    <div class="card">
+      <h2>✅ فحص الأهلية للترقية</h2>
+      <div class="form-grid form-grid-single">
+        <div class="field">
+          <label>السلك (الإطار)</label>
+          <select id="e-cycle">
+            <option value="primary" selected>التعليم الابتدائي</option>
+            <option value="middle">التعليم الإعدادي</option>
+            <option value="secondary">التعليم التأهيلي</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الرتبة الحالية (1 — 10)</label>
+          <select id="e-rank">
+            <option value="1">الرتبة 1</option>
+            <option value="2">الرتبة 2</option>
+            <option value="3">الرتبة 3</option>
+            <option value="4">الرتبة 4</option>
+            <option value="5">الرتبة 5</option>
+            <option value="6">الرتبة 6</option>
+            <option value="7">الرتبة 7</option>
+            <option value="8">الرتبة 8</option>
+            <option value="9">الرتبة 9</option>
+            <option value="10">الرتبة 10</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid form-grid-single">
+        <div class="field">
+          <label>سنوات الخدمة في الرتبة الحالية</label>
+          <input type="number" id="e-years-rank" min="0" step="0.5" value="2">
+        </div>
+        <div class="field">
+          <label>سنوات الخدمة في السلم (الدرجة) الحالية</label>
+          <input type="number" id="e-years-scale" min="0" step="0.5" value="8">
+        </div>
+        <div class="field">
+          <label>سنوات الأقدمية العامة</label>
+          <input type="number" id="e-years-gen" min="0" step="0.5" value="12">
+        </div>
+      </div>
+      <div class="form-grid form-grid-single">
+        <div class="field">
+          <label>نقطة التفتيش (0 — 20)</label>
+          <input type="number" id="e-insp" min="0" max="20" step="0.25" value="14">
+        </div>
+        <div class="field">
+          <label>عدد التقييدات في جدول الترقي (0 — 4)</label>
+          <input type="number" id="e-insc" min="0" max="4" value="0">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="checkElig()">✅ فحص الأهلية</button>
+      </div>
+      <div id="elig-result" class="result-box" hidden></div>
+    </div>
+  </section>
+
+  <section id="tab-ranks" class="tab-panel">
+    <div class="card">
+      <h2>📊 جدول الترقي في الرتبة — الدرجة الثانية (السلم العاشر)</h2>
+      <p class="hint">الرقم الاستدلال، نسق الترقية: ترقي سريع / ترق متوسط / ترق بطيء (وفق الصورة — قيم OCR).</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>الرتبة</th><th>الرقم الاستدلال</th><th>ترق سريع</th><th>ترق متوسط</th><th>ترق بطيء</th></tr>
+          </thead>
+          <tbody id="ranks10-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📊 جدول الترقي في الرتبة — الدرجة الأولى (السلم 11)</h2>
+      <p class="hint">الرقم الاستدلال، نسق الترقية: ترقي سريع / ترق متوسط / ترق بطيء (وفق الصورة — قيم OCR).</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>الرتبة</th><th>الرقم الاستدلال</th><th>ترق سريع</th><th>ترق متوسط</th><th>ترق بطيء</th></tr>
+          </thead>
+          <tbody id="ranks11-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📊 جدول الترقي في الرتبة — الممتازة (خارج السلم)</h2>
+      <p class="hint">الرقم الاستدلال، نسق الترقية: ترقي سريع / ترق متوسط / ترق بطيء (وفق الصورة — قيم OCR).</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>الرتبة</th><th>الرقم الاستدلال</th><th>ترق سريع</th><th>ترق متوسط</th><th>ترق بطيء</th></tr>
+          </thead>
+          <tbody id="ranksHC-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-info" class="tab-panel">
+    <div class="card">
+      <h2>🧮 حاسبة نقاط الترقية بالاختيار</h2>
+      <p class="hint">المعادلة الرسمية: المجموع = (أقدمية عامة × 1) + (أقدمية في السلم × 2) + نقطة المدير + نقطة المفتش + نقطة المدير الإقليمي</p>
+    </div>
+    <div class="card">
+      <h2>⚙️ الاعدادات</h2>
+      <ul class="info-list">
+        <li><strong>الحق في الاطلاع:</strong> الاطلاع على النقطة العددية قبل عرض جدول الترقي.</li>
+        <li><strong>طلب المراجعة:</strong> داخل 8 أيام من التبليغ.</li>
+        <li><strong>الطعن:</strong> في حال استيفاء الشروط دون إدراج، طعن عبر السلم الإداري.</li>
+        <li><strong>التسقيف:</strong> بعد 4 تقييدات متتالية، ترقية تلقائية خارج الحصة.</li>
+        <li><strong>المصدر:</strong> مرسوم 2.24.140 (23 فبراير 2024) — الجريدة الرسمية 7277.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>⚙️ إعدادات التحديث</h3>
+      <p class="hint">لتحديث بدون إعادة تثبيت، أدخل رابط GitHub Pages/Netlify في زر "🔄 تحديث".</p>
+      <button class="secondary-btn" onclick="localStorage.removeItem('tarqiya_remote_url'); alert('تم إعادة التعيين (وضع محلي).');">🔄 إعادة تعيين (وضع محلي)</button>
+    </div>
+    <div class="card">
+      <h3>📋 شروط الترقية بالاختيار</h3>
+      <ul class="info-list">
+        <li>10 سنوات من الخدمة الفعلية في السلم أو الدرجة الحالية (الترقية بالاختيار).</li>
+        <li>الحصة (الكوتا): 22% (الدرجة 2→1)، 36% (الدرجة 1→خارج السلم)، 14% (الامتحان المهني).</li>
+        <li>التسقيف: بعد 4 تقييدات متتالية دون ترقية، ترقية تلقائية خارج الحصة.</li>
+        <li>الامتحان المهني: 6 سنوات في الدرجة (حصة 14%).</li>
+        <li>خارج السلم: 5 سنوات في الدرجة + الرتبة 7 على الأقل (حصة 36%).</li>
+        <li>العتبات: ابتدائي: 110 (2→1)، 116.5 (1→خ.س) | إعدادي: 101 (2→1)، 116 (1→خ.س) | تأهيلي: 95 (2→1)، 91 (1→خ.س).</li>
+      </ul>
+    </div>
+
+<div class="card">
+      <h3>⚙️ العتبات (قابلة للتعديل)</h3>
+      <p class="hint">عدّل قيم العتبات حسب المعطيات. تُحفظ تلقائياً.</p>
+      <div class="thresh-row">
+        <span class="thresh-label">التعليم الابتدائي</span>
+        <div class="thresh-inputs">
+          <div class="field"><label>من الدرجة 2 إلى 1</label><input type="number" id="t-primary-2to1" step="0.5" value="110"></div>
+          <div class="field"><label>من الدرجة 1 إلى خارج السلم</label><input type="number" id="t-primary-1toHC" step="0.5" value="116.5"></div>
+        </div>
+      </div>
+      <div class="thresh-row">
+        <span class="thresh-label">التعليم الإعدادي</span>
+        <div class="thresh-inputs">
+          <div class="field"><label>من الدرجة 2 إلى 1</label><input type="number" id="t-middle-2to1" step="0.5" value="101"></div>
+          <div class="field"><label>من الدرجة 1 إلى خارج السلم</label><input type="number" id="t-middle-1toHC" step="0.5" value="116"></div>
+        </div>
+      </div>
+      <div class="thresh-row">
+        <span class="thresh-label">التعليم التأهيلي</span>
+        <div class="thresh-inputs">
+          <div class="field"><label>من الدرجة 2 إلى 1</label><input type="number" id="t-secondary-2to1" step="0.5" value="95"></div>
+          <div class="field"><label>من الدرجة 1 إلى خارج السلم</label><input type="number" id="t-secondary-1toHC" step="0.5" value="91"></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="saveThresholds()">💾 حفظ العتبات</button>
+        <button class="secondary-btn" onclick="resetThresholds()">🔄 إعادة تعيين</button>
+      </div>
+    </div>
+
+<div class="card">
+      <h3>💾 النتائج المحفوظة</h3>
+      <div id="saved-list" class="saved-list"></div>
+      <button class="secondary-btn" onclick="clearSaved()">🗑️ مسح الكل</button>
+    </div>
+    <div class="card">
+      <h3>📌 مصادر</h3>
+      <p class="hint">مرسوم 2.24.140 (23 فبراير 2024)، الجريدة الرسمية 7277؛ مذكرة 062-26 (16 يونيو 2026). تقديرات indicative — الجهة المختصة هي الفيصل.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <p>Tarqiya - ترقية © 2026 — تقديرات indicative، الجهة المختصة هي الفيصل.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

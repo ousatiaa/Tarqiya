@@ -1,0 +1,15 @@
+{
+  "name": "Tarqiya - ترقية",
+  "short_name": "Tarqiya",
+  "description": "مساعدة الأستاذ في حساب نقاط الترقية ومعرفة الأهلية للترقية في الرتبة",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e5f3a",
+  "theme_color": "#1e5f3a",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
