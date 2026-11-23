@@ -366,6 +366,14 @@ function resetThresholds(){
   alert('تم إعادة تعيين العتبات.');
 }
 
+// ===== Auto-update from remote =====
+(function(){
+  const remoteUrl = localStorage.getItem('tarqiya_remote_url');
+  if(remoteUrl && remoteUrl.startsWith('http') && !window.location.href.startsWith(remoteUrl)){
+    window.location.replace(remoteUrl);
+  }
+})();
+
 // ===== Init =====
 buildRanks10Table();
 buildRanks11Table();
