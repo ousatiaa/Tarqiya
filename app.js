@@ -300,36 +300,15 @@ function showUpdateBanner(){
   }
 }
 
-// update button (manual check / remote update)
+// update button (automatic update, no prompt)
 document.getElementById('updateBtn').addEventListener('click', async ()=>{
   const btn = document.getElementById('updateBtn');
   btn.textContent = '...';
   try {
-    const remoteUrl = localStorage.getItem('tarqiya_remote_url');
-    if(remoteUrl){
-      // fetch latest from remote (no reinstall needed)
-      window.location.href = remoteUrl;
-      return;
-    }
-    // ask for remote URL
-    const url = prompt('أدخل رابط التحديث (GitHub Pages / Netlify):', 'https://');
-    if(url && url.startsWith('http')){
-      localStorage.setItem('tarqiya_remote_url', url);
-      window.location.href = url;
-    } else {
-      // fallback: SW check
-      if(swRegistration){
-        await swRegistration.update();
-        if(swRegistration.waiting){
-          showUpdateBanner();
-        } else {
-          btn.textContent = '✅ محدّث';
-          setTimeout(()=>{ btn.textContent = '🔄 تحديث'; }, 2000);
-        }
-      } else {
-        btn.textContent = '🔄 تحديث';
-      }
-    }
+    const remoteUrl = localStorage.getItem('tarqiya_remote_url') || DEFAULT_REMOTE_URL;
+    localStorage.setItem('tarqiya_remote_url', remoteUrl);
+    // fetch latest from remote (no reinstall needed)
+    window.location.href = remoteUrl;
   } catch(e){
     btn.textContent = '🔄 تحديث';
   }
@@ -366,9 +345,12 @@ function resetThresholds(){
   alert('تم إعادة تعيين العتبات.');
 }
 
+const DEFAULT_REMOTE_URL = 'https://ousatiaa.github.io/Tarqiya/';
+
 // ===== Auto-update from remote =====
 (function(){
-  const remoteUrl = localStorage.getItem('tarqiya_remote_url');
+  const remoteUrl = localStorage.getItem('tarqiya_remote_url') || DEFAULT_REMOTE_URL;
+  localStorage.setItem('tarqiya_remote_url', remoteUrl);
   if(remoteUrl && remoteUrl.startsWith('http') && !window.location.href.startsWith(remoteUrl)){
     window.location.replace(remoteUrl);
   }
