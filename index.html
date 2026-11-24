@@ -43,7 +43,11 @@
           <select id="c-cycle">
             <option value="primary" selected>التعليم الابتدائي</option>
             <option value="middle">التعليم الإعدادي</option>
-            <option value="secondary">التعليم التأهيلي</option>
+            <option value="secondary">التعليم الثانوي التأهيلي</option>
+            <option value="pedago">إطار مختص تربوي</option>
+            <option value="ecoAdmin">إطار مختص الاقتصاد والادارة</option>
+            <option value="adminPedago">متصرف تربوي</option>
+            <option value="social">إطار مختص اجتماعي</option>
           </select>
         </div>
         <div class="field">
@@ -118,7 +122,11 @@
           <select id="e-cycle">
             <option value="primary" selected>التعليم الابتدائي</option>
             <option value="middle">التعليم الإعدادي</option>
-            <option value="secondary">التعليم التأهيلي</option>
+            <option value="secondary">التعليم الثانوي التأهيلي</option>
+            <option value="pedago">إطار مختص تربوي</option>
+            <option value="ecoAdmin">إطار مختص الاقتصاد والادارة</option>
+            <option value="adminPedago">متصرف تربوي</option>
+            <option value="social">إطار مختص اجتماعي</option>
           </select>
         </div>
         <div class="field">
@@ -224,8 +232,15 @@
     </div>
     <div class="card">
       <h3>⚙️ إعدادات التحديث</h3>
-      <p class="hint">لتحديث بدون إعادة تثبيت، أدخل رابط GitHub Pages/Netlify في زر "🔄 تحديث".</p>
-      <button class="secondary-btn" onclick="localStorage.removeItem('tarqiya_remote_url'); alert('تم إعادة التعيين (وضع محلي).');">🔄 إعادة تعيين (وضع محلي)</button>
+      <p class="hint">لتحديث بدون إعادة تثبيت، أدخل رابط استضافة (Netlify / Vercel / GitHub Pages / Supabase) ثم اضغط 🔄 تحديث.</p>
+      <div class="field full">
+        <label>رابط التحديث (URL)</label>
+        <input type="url" id="remote-url" placeholder="https://your-site.netlify.app/" value="">
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="saveRemoteUrl()">💾 حفظ الرابط</button>
+        <button class="secondary-btn" onclick="localStorage.removeItem('tarqiya_remote_url'); document.getElementById('remote-url').value=''; alert('تم إعادة التعيين (وضع محلي).');">🔄 وضع محلي</button>
+      </div>
     </div>
     <div class="card">
       <h3>📋 شروط الترقية بالاختيار</h3>
@@ -276,13 +291,13 @@
     </div>
     <div class="card">
       <h3>📌 مصادر</h3>
-      <p class="hint">مرسوم 2.24.140 (23 فبراير 2024)، الجريدة الرسمية 7277؛ مذكرة 062-26 (16 يونيو 2026). تقديرات indicative — الجهة المختصة هي الفيصل.</p>
+      <p class="hint">مرسوم 2.24.140 (23 فبراير 2024)، الجريدة الرسمية 7277؛ مذكرة 062-26 (16 يونيو 2026).</p>
     </div>
   </section>
 </main>
 
 <footer class="app-footer">
-  <p>Tarqiya - ترقية © 2026 — تقديرات indicative، الجهة المختصة هي الفيصل.</p>
+  <p>Tarqiya - ترقية © 2026</p>
 </footer>
 
 <script src="app.js"></script>

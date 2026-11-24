@@ -54,8 +54,12 @@ const THRESHOLDS = {
   primary: { '2to1': 110, '1toHC': 116.5 },
   middle: { '2to1': 101, '1toHC': 116 },
   secondary: { '2to1': 95, '1toHC': 91 },
+  pedago: { '2to1': 95, '1toHC': 91 },
+  ecoAdmin: { '2to1': 95, '1toHC': 91 },
+  adminPedago: { '2to1': 95, '1toHC': 91 },
+  social: { '2to1': 95, '1toHC': 91 },
 };
-const CYCLE_LABELS = {primary:'التعليم الابتدائي',middle:'التعليم الإعدادي',secondary:'التعليم التأهيلي'};
+const CYCLE_LABELS = {primary:'التعليم الابتدائي',middle:'التعليم الإعدادي',secondary:'التعليم الثانوي التأهيلي',pedago:'إطار مختص تربوي',ecoAdmin:'إطار مختص الاقتصاد والادارة',adminPedago:'متصرف تربوي',social:'إطار مختص اجتماعي'};
 const MONTHS = ['يناير','فبراير','مارس','أبريل','ماي','يونيو','يوليوز','غشت','شتنبر','أكتوبر','نونبر','دجنبر'];
 
 // ===== Tabs =====
@@ -300,19 +304,38 @@ function showUpdateBanner(){
   }
 }
 
-// update button (automatic update, no prompt)
+// update button (automatic update, no prompt, no URL needed)
 document.getElementById('updateBtn').addEventListener('click', async ()=>{
   const btn = document.getElementById('updateBtn');
   btn.textContent = '...';
   try {
     const remoteUrl = localStorage.getItem('tarqiya_remote_url') || DEFAULT_REMOTE_URL;
     localStorage.setItem('tarqiya_remote_url', remoteUrl);
-    // fetch latest from remote (no reinstall needed)
     window.location.href = remoteUrl;
   } catch(e){
     btn.textContent = '🔄 تحديث';
   }
 });
+
+// save remote url
+function saveRemoteUrl(){
+  const url = document.getElementById('remote-url').value.trim();
+  if(url && url.startsWith('http')){
+    localStorage.setItem('tarqiya_remote_url', url);
+    alert('تم حفظ الرابط. اضغط 🔄 تحديث للتحديث.');
+  } else {
+    alert('المرجو إدخال رابط صحيح (https://...)');
+  }
+}
+
+// load remote url into input
+function loadRemoteUrl(){
+  const el = document.getElementById('remote-url');
+  if(el){
+    const url = localStorage.getItem('tarqiya_remote_url') || DEFAULT_REMOTE_URL;
+    el.value = url;
+  }
+}
 
 // auto-reload when new SW takes control
 if('serviceWorker' in navigator){
@@ -363,4 +386,5 @@ buildRanksHCTable();
 populateDateSelects();
 loadInputs();
 loadThresholds();
+loadRemoteUrl();
 renderSaved();
